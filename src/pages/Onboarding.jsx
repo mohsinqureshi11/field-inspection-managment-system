@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { officerAPI } from "../features/form/formAPI";
+import API from "../api/axios"; // axios instance import
 
 const Onboarding = () => {
   const [formData, setFormData] = useState({
@@ -15,33 +15,44 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  // Input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // File change handler
   const handleFileChange = (e) => {
     setFormData((prev) => ({ ...prev, profilePhoto: e.target.files[0] }));
   };
 
+  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      const payload = {
-        userName: formData.userName,
-        email: formData.email,
-        gander: formData.gander,
-        age: formData.age,
-        phoneNumber: formData.phoneNumber,
-        desigination: formData.desigination,
-      };
+      // FormData object for sending files + text data
+      const formDataToSend = new FormData();
+      formDataToSend.append("userName", formData.userName);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("gander", formData.gander);
+      formDataToSend.append("age", formData.age);
+      formDataToSend.append("phoneNumber", formData.phoneNumber);
+      formDataToSend.append("desigination", formData.desigination);
+      if (formData.profilePhoto) {
+        formDataToSend.append("profilePhoto", formData.profilePhoto);
+      }
 
-      const response = await officerAPI.createOfficer(payload);
-      setMessage(response.message || "Officer registered successfully!");
+      // Backend API call
+      const response = await API.post("/createOfficer/officerRegister", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
+      setMessage(response.data.message || "Officer registered successfully!");
+
+      // Reset form
       setFormData({
         userName: "",
         email: "",
@@ -53,7 +64,9 @@ const Onboarding = () => {
       });
     } catch (error) {
       console.error("Error creating officer:", error);
-      setMessage(error.message || "Something went wrong!");
+      setMessage(
+        error.response?.data?.message || "Something went wrong!"
+      );
     } finally {
       setLoading(false);
     }

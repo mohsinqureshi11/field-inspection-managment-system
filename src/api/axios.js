@@ -3,7 +3,8 @@ import axios from "axios";
 
 // Backend URL - Updated with your actual Vercel deployment URL
 const API = axios.create({
-  baseURL: "https://fims-backend-b930ziv5a-mohsin-qureshis-projects.vercel.app", // Your deployed backend URL
+  
+  baseURL: "https://fims-backend-lac.vercel.app/", // Your deployed backend URL
   timeout: 10000, // 10 seconds timeout
   withCredentials: true,
   headers: {
