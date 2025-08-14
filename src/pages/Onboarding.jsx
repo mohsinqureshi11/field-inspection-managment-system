@@ -1,6 +1,5 @@
-// src/pages/Onboarding.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../api/axios"; // axios.js path check karo
 
 const Onboarding = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +9,7 @@ const Onboarding = () => {
     age: "",
     phoneNumber: "",
     desigination: "",
-    profilePhoto: null, // Optional image placeholder
+    profilePhoto: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -34,7 +33,7 @@ const Onboarding = () => {
     setMessage("");
 
     try {
-      // Image ko abhi backend pe send nahi karenge
+      // Payload without profile photo
       const payload = {
         userName: formData.userName,
         email: formData.email,
@@ -44,12 +43,9 @@ const Onboarding = () => {
         desigination: formData.desigination,
       };
 
-      const res = await axios.post(
-        "http://localhost:9000/createOfficer/officerRegister", payload,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const res = await API.post("/createOfficer/officerRegister", payload, {
+        headers: { "Content-Type": "application/json" },
+      });
 
       setMessage(res.data.message || "Officer registered successfully!");
 
@@ -73,9 +69,7 @@ const Onboarding = () => {
 
   return (
     <div className="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        Officer Onboarding
-      </h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Officer Onboarding</h2>
       {message && <p className="mb-4 text-center text-green-600">{message}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">

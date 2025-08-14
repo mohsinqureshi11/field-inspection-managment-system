@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addForm } from "./formSlice";
-import API from "../api/axios"; // axios.js file pointing to deployed backend
+import API from "../../api/axios.js"; // axios.js file pointing to deployed backend
 
 const fieldTypes = [
   { id: "text", label: "Text Input", icon: "📝" },
