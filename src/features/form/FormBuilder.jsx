@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addForm } from "./formSlice";
-import API from "../../api/axios.js"; // axios.js file pointing to deployed backend
+import { formAPI, officerAPI } from "./formAPI.js";
 
 const fieldTypes = [
   { id: "text", label: "Text Input", icon: "📝" },
@@ -24,16 +24,21 @@ const FormBuilder = () => {
 
   // Fetch officers from backend
   useEffect(() => {
-    API.get("/officerapi/getAllOfficers")
-      .then((res) => {
-        if (Array.isArray(res.data)) setOfficers(res.data);
-        else if (Array.isArray(res.data.data)) setOfficers(res.data.data);
-        else setOfficers([]);
-      })
-      .catch((err) => {
-        console.error("Error fetching officers:", err);
+    const fetchOfficers = async () => {
+      try {
+        const response = await officerAPI.getAllOfficers();
+        if (response.success && Array.isArray(response.data)) {
+          setOfficers(response.data);
+        } else {
+          setOfficers([]);
+        }
+      } catch (error) {
+        console.error("Error fetching officers:", error);
         setOfficers([]);
-      });
+      }
+    };
+    
+    fetchOfficers();
   }, []);
 
   // Add a new field
@@ -58,7 +63,7 @@ const FormBuilder = () => {
   };
 
   // Submit form to Redux and backend
-  const submitForm = () => {
+  const submitForm = async () => {
     if (!formTitle.trim()) {
       alert("Please enter a form title");
       return;
@@ -80,21 +85,20 @@ const FormBuilder = () => {
     );
 
     // Backend POST
-    API.post("/formapi/createForm", {
-      title: formTitle,
-      fields,
-      officerId: selectedOfficer || null,
-    })
-      .then(() => {
-        alert("Form submitted successfully!");
-        setFormTitle("");
-        setFields([]);
-        setSelectedOfficer("");
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Error submitting form");
+    try {
+      await formAPI.createForm({
+        title: formTitle,
+        fields,
+        officerId: selectedOfficer || null,
       });
+      alert("Form submitted successfully!");
+      setFormTitle("");
+      setFields([]);
+      setSelectedOfficer("");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert(`Error submitting form: ${error.message}`);
+    }
   };
 
   return (

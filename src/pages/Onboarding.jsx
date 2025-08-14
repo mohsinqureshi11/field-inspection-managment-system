@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import API from "../api/axios";
+import { officerAPI } from "../features/form/formAPI";
 
 const Onboarding = () => {
   const [formData, setFormData] = useState({
@@ -39,11 +39,8 @@ const Onboarding = () => {
         desigination: formData.desigination,
       };
 
-      const res = await API.post("/createOfficer/officerRegister", payload, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      setMessage(res.data.message || "Officer registered successfully!");
+      const response = await officerAPI.createOfficer(payload);
+      setMessage(response.message || "Officer registered successfully!");
 
       setFormData({
         userName: "",
@@ -55,8 +52,8 @@ const Onboarding = () => {
         profilePhoto: null,
       });
     } catch (error) {
-      console.error(error);
-      setMessage(error.response?.data?.message || "Something went wrong!");
+      console.error("Error creating officer:", error);
+      setMessage(error.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }
