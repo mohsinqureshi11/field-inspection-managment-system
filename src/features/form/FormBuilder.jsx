@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addForm } from "./formSlice";
-import { officerAPI } from "../api/axios"; // axios file ka path
+import { officerAPI } from "../../api/axios.js"; // axios file ka path
 
 const fieldTypes = [
   { id: "text", label: "Text Input", icon: "📝" },
