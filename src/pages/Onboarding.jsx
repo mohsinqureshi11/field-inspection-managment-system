@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import API from "../api/axios"; // axios.js path check karo
+import API from "../api/axios";
 
 const Onboarding = () => {
   const [formData, setFormData] = useState({
@@ -15,25 +15,21 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Handle text inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle file input (store only, not uploading now)
   const handleFileChange = (e) => {
     setFormData((prev) => ({ ...prev, profilePhoto: e.target.files[0] }));
   };
 
-  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      // Payload without profile photo
       const payload = {
         userName: formData.userName,
         email: formData.email,
@@ -49,7 +45,6 @@ const Onboarding = () => {
 
       setMessage(res.data.message || "Officer registered successfully!");
 
-      // Reset form
       setFormData({
         userName: "",
         email: "",
