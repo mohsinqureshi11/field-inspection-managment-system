@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addForm } from "./formSlice";
-import axios from "axios";
+import API from "../api/axios"; // axios.js file pointing to deployed backend
 
 const fieldTypes = [
   { id: "text", label: "Text Input", icon: "📝" },
@@ -22,17 +22,13 @@ const FormBuilder = () => {
   const [selectedOfficer, setSelectedOfficer] = useState("");
   const dispatch = useDispatch();
 
+  // Fetch officers from backend
   useEffect(() => {
-    axios
-      .get("http://localhost:9000/officerapi/getAllOfficers")
+    API.get("/officerapi/getAllOfficers")
       .then((res) => {
-        if (Array.isArray(res.data)) {
-          setOfficers(res.data);
-        } else if (Array.isArray(res.data.data)) {
-          setOfficers(res.data.data);
-        } else {
-          setOfficers([]);
-        }
+        if (Array.isArray(res.data)) setOfficers(res.data);
+        else if (Array.isArray(res.data.data)) setOfficers(res.data.data);
+        else setOfficers([]);
       })
       .catch((err) => {
         console.error("Error fetching officers:", err);
@@ -40,6 +36,7 @@ const FormBuilder = () => {
       });
   }, []);
 
+  // Add a new field
   const addField = (type) => {
     const newField = {
       id: Date.now() + Math.random().toString(36).substr(2, 9),
@@ -53,13 +50,14 @@ const FormBuilder = () => {
     setFields((prev) => [...prev, newField]);
   };
 
+  // Update field values
   const updateField = (index, key, value) => {
     const updated = [...fields];
     updated[index][key] = value;
     setFields(updated);
   };
 
-  // Form submit karna
+  // Submit form to Redux and backend
   const submitForm = () => {
     if (!formTitle.trim()) {
       alert("Please enter a form title");
@@ -70,7 +68,7 @@ const FormBuilder = () => {
       return;
     }
 
-    // Redux me save (local list ke liye)
+    // Redux local save
     dispatch(
       addForm({
         id: Date.now().toString(),
@@ -82,21 +80,21 @@ const FormBuilder = () => {
     );
 
     // Backend POST
-    axios
-      .post("http://localhost:9000/formapi/createForm", {
-        title: formTitle,
-        fields,
-        officerId: selectedOfficer || null,
+    API.post("/formapi/createForm", {
+      title: formTitle,
+      fields,
+      officerId: selectedOfficer || null,
+    })
+      .then(() => {
+        alert("Form submitted successfully!");
+        setFormTitle("");
+        setFields([]);
+        setSelectedOfficer("");
       })
-      .then(() => alert("Form submitted successfully!"))
       .catch((err) => {
         console.error(err);
         alert("Error submitting form");
       });
-
-    setFormTitle("");
-    setFields([]);
-    setSelectedOfficer("");
   };
 
   return (
@@ -160,7 +158,9 @@ const FormBuilder = () => {
               <input
                 type="text"
                 value={field.question}
-                onChange={(e) => updateField(index, "question", e.target.value)}
+                onChange={(e) =>
+                  updateField(index, "question", e.target.value)
+                }
                 className="w-full p-1 border rounded"
                 placeholder="Enter your question"
               />
