@@ -1,52 +1,16 @@
-// src/api/axios.js
 import axios from "axios";
 
-// Backend URL - Updated with your actual Vercel deployment URL
-const API = axios.create({
-  
-  baseURL: "https://fims-backend-lac.vercel.app/", // Your deployed backend URL
-  timeout: 10000, // 10 seconds timeout
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  }
-});
+// Change this to your Vercel backend URL
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Request interceptor
-API.interceptors.request.use(
-  (config) => {
-    console.log('🚀 API Request:', config.method?.toUpperCase(), config.url);
-    return config;
+
+export const officerAPI = {
+  getAllOfficers: async () => {
+    const response = await axios.get(`${BASE_URL}/officerapi/getAllOfficers`);
+    return response.data;
   },
-  (error) => {
-    console.error('❌ Request Error:', error);
-    return Promise.reject(error);
+  createOfficer: async (officerData) => {
+    const response = await axios.post(`${BASE_URL}/createOfficer/officerRegister`, officerData);
+    return response.data;
   }
-);
-
-// Response interceptor
-API.interceptors.response.use(
-  (response) => {
-    console.log('✅ API Response:', response.status, response.config.url);
-    return response;
-  },
-  (error) => {
-    console.error('❌ Response Error:', error.response?.status, error.response?.data);
-    
-    // Handle specific error cases
-    if (error.response?.status === 401) {
-      // Handle unauthorized
-      console.log('🔐 Unauthorized access');
-    } else if (error.response?.status === 404) {
-      // Handle not found
-      console.log('🔍 Resource not found');
-    } else if (error.response?.status >= 500) {
-      // Handle server errors
-      console.log('🛠️ Server error');
-    }
-    
-    return Promise.reject(error);
-  }
-);
-
-export default API;
+};

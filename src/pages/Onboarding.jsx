@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import API from "../api/axios"; // axios instance import
+import axios from "axios";
 
 const Onboarding = () => {
   const [formData, setFormData] = useState({
@@ -15,44 +15,37 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // File change handler
   const handleFileChange = (e) => {
     setFormData((prev) => ({ ...prev, profilePhoto: e.target.files[0] }));
   };
 
-  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      // FormData object for sending files + text data
-      const formDataToSend = new FormData();
-      formDataToSend.append("userName", formData.userName);
-      formDataToSend.append("email", formData.email);
-      formDataToSend.append("gander", formData.gander);
-      formDataToSend.append("age", formData.age);
-      formDataToSend.append("phoneNumber", formData.phoneNumber);
-      formDataToSend.append("desigination", formData.desigination);
-      if (formData.profilePhoto) {
-        formDataToSend.append("profilePhoto", formData.profilePhoto);
-      }
+      // Backend URL from .env
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/createOfficer/officerRegister`,
+        {
+          userName: formData.userName,
+          email: formData.email,
+          gander: formData.gander,
+          age: formData.age,
+          phoneNumber: formData.phoneNumber,
+          desigination: formData.desigination,
+          // profilePhoto will be ignored in backend
+        }
+      );
 
-      // Backend API call
-      const response = await API.post("/createOfficer/officerRegister", formDataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      setMessage(res.data.message);
 
-      setMessage(response.data.message || "Officer registered successfully!");
-
-      // Reset form
       setFormData({
         userName: "",
         email: "",
@@ -62,11 +55,9 @@ const Onboarding = () => {
         desigination: "",
         profilePhoto: null,
       });
+
     } catch (error) {
-      console.error("Error creating officer:", error);
-      setMessage(
-        error.response?.data?.message || "Something went wrong!"
-      );
+      setMessage(error.response?.data?.message || "Error submitting form");
     } finally {
       setLoading(false);
     }
@@ -78,75 +69,18 @@ const Onboarding = () => {
       {message && <p className="mb-4 text-center text-green-600">{message}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="userName"
-          placeholder="User Name"
-          value={formData.userName}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <select
-          name="gander"
-          value={formData.gander}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        >
+        <input type="text" name="userName" placeholder="User Name" value={formData.userName} onChange={handleChange} required className="w-full border p-2 rounded"/>
+        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required className="w-full border p-2 rounded"/>
+        <select name="gander" value={formData.gander} onChange={handleChange} required className="w-full border p-2 rounded">
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>
-        <input
-          type="number"
-          name="age"
-          placeholder="Age"
-          value={formData.age}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="text"
-          name="phoneNumber"
-          placeholder="Phone Number"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="text"
-          name="desigination"
-          placeholder="Designation"
-          value={formData.desigination}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="file"
-          name="profilePhoto"
-          onChange={handleFileChange}
-          className="w-full border p-2 rounded"
-          accept="image/*"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          disabled={loading}
-        >
+        <input type="number" name="age" placeholder="Age" value={formData.age} onChange={handleChange} required className="w-full border p-2 rounded"/>
+        <input type="text" name="phoneNumber" placeholder="Phone Number" value={formData.phoneNumber} onChange={handleChange} required className="w-full border p-2 rounded"/>
+        <input type="text" name="desigination" placeholder="Designation" value={formData.desigination} onChange={handleChange} required className="w-full border p-2 rounded"/>
+        <input type="file" name="profilePhoto" onChange={handleFileChange} accept="image/*" className="w-full border p-2 rounded"/>
+        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700" disabled={loading}>
           {loading ? "Registering..." : "Register Officer"}
         </button>
       </form>
