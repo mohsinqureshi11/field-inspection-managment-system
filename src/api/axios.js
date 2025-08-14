@@ -1,16 +1,17 @@
 import axios from "axios";
 
-// Change this to your Vercel backend URL
-const BASE_URL = process.env.REACT_APP_BACKEND_URL;
-
+const backend = axios.create({
+  baseURL: process.env.REACT_APP_BACKEND_URL,
+  withCredentials: true, // agar cookies ya credentials chahiye
+});
 
 export const officerAPI = {
   getAllOfficers: async () => {
-    const response = await axios.get(`${BASE_URL}/officerapi/getAllOfficers`);
-    return response.data;
+    const res = await backend.get("/officerapi/getAllOfficers");
+    return res.data;
   },
   createOfficer: async (officerData) => {
-    const response = await axios.post(`${BASE_URL}/createOfficer/officerRegister`, officerData);
-    return response.data;
+    const res = await backend.post("/createOfficer/officerRegister", officerData);
+    return res.data;
   }
 };
