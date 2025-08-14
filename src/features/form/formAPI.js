@@ -61,6 +61,7 @@ export const officerAPI = {
       const response = await API.get('/officerapi/getAllOfficers');
       return response.data;
     } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
       throw new Error(error.response?.data?.message || 'Failed to fetch officers');
     }
   },
@@ -71,6 +72,7 @@ export const officerAPI = {
       const response = await API.post('/createOfficer/officerRegister', officerData);
       return response.data;
     } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
       throw new Error(error.response?.data?.message || 'Failed to create officer');
     }
   }
