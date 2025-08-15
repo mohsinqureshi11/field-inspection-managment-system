@@ -2,7 +2,7 @@ import axios from "axios";
 
 const backend = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL,
-  withCredentials: true, // agar cookies ya credentials chahiye
+  // withCredentials: true, // agar cookies ya credentials chahiye
 });
 
 export const officerAPI = {
