@@ -12,8 +12,5 @@ export const officerAPI = {
     const res = await backend.get("/officerapi/getAllOfficers");
     return res.data;
   },
-  deleteOfficer: async (officerName) => {
-    const res = await backend.delete(`/deleteOfficer/deleteOfficer/${officerName}`);
-    return res.data;
-  },
+  
 };

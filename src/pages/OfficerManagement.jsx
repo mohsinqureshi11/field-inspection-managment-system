@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { officerAPI } from "../api/axios.js";
+import axios from "axios";
 
 const OfficerManagement = () => {
   const [officers, setOfficers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(null);
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   // Fetch officers from backend
@@ -14,13 +15,24 @@ const OfficerManagement = () => {
     fetchOfficers();
   }, []);
 
+  // Clear message after 3 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const fetchOfficers = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await officerAPI.getAllOfficers();
-      if (res.success) {
-        setOfficers(res.data);
+      setMessage("");
+      const res = await axios.get("https://fims-backend-lac.vercel.app/officerapi/getAllOfficers");
+      if (res.data.success) {
+        setOfficers(res.data.data);
       } else {
         setError("Failed to fetch officers");
       }
@@ -32,27 +44,29 @@ const OfficerManagement = () => {
     }
   };
 
-  const handleDeleteOfficer = async (officerId, officerName) => {
-    if (!window.confirm(`Are you sure you want to delete officer "${officerName}"?`)) {
+  const handleDeleteOfficer = async (officerId) => {
+    if (!window.confirm(`Are you sure you want to delete this officer?`)) {
       return;
     }
 
     try {
       setDeleteLoading(officerId);
-      console.log("Deleting officer:", officerName);
+      setMessage("");
+      console.log("Deleting officer with ID:", officerId);
       
-      // Call the delete API with officer name
-      const res = await officerAPI.deleteOfficer(officerName);
+      // Call the delete API with officer ID
+      const res = await axios.delete(`https://fims-backend-lac.vercel.app/delete/deleteOfficer/${officerId}`);
       console.log("Delete API response:", res);
       
-      // Remove from local state regardless of response (since backend might not return success flag)
+      // If we reach here, delete was successful (no error thrown)
+      // Remove from local state immediately
       setOfficers(prev => prev.filter(officer => officer._id !== officerId));
-      alert(`Officer "${officerName}" deleted successfully!`);
+      setMessage("Officer deleted successfully!");
       
     } catch (error) {
       console.error("Failed to delete officer", error);
       console.error("Error details:", error.response?.data);
-      alert(`Failed to delete officer "${officerName}". Please try again.`);
+      setMessage(`Failed to delete officer. Please try again.`);
     } finally {
       setDeleteLoading(null);
     }
@@ -98,6 +112,17 @@ const OfficerManagement = () => {
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Officer Management</h1>
           <p className="text-sm sm:text-base text-gray-600">Manage all officers in the system</p>
+          
+          {/* Message Display */}
+          {message && (
+            <div className={`mt-4 p-3 rounded-lg text-sm ${
+              message.includes('successfully') 
+                ? 'bg-green-100 text-green-800 border border-green-200' 
+                : 'bg-red-100 text-red-800 border border-red-200'
+            }`}>
+              {message}
+            </div>
+          )}
         </div>
 
         {/* Officer Management Section */}
@@ -163,7 +188,7 @@ const OfficerManagement = () => {
                     
                     <div className="flex justify-end">
                       <button
-                        onClick={() => handleDeleteOfficer(officer._id, officer.userName)}
+                        onClick={() => handleDeleteOfficer(officer._id)}
                         disabled={deleteLoading === officer._id}
                         className="px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-red-300 disabled:cursor-not-allowed transition flex items-center space-x-1 sm:space-x-2 text-sm"
                       >
