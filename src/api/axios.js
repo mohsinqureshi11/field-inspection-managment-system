@@ -1,5 +1,6 @@
 import axios from "axios";
 
+console.log("Backend URL:", process.env.REACT_APP_BACKEND_URL);
 const backend = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL,
   // withCredentials: true, // agar cookies ya credentials chahiye
