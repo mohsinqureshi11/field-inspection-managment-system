@@ -9,6 +9,8 @@ import NotFound from './pages/NotFound';
 import CreateForm from './pages/CreateForm';
 import FormList from './pages/FormList';
 import FormRendererWrapper from './features/form/FormRendererWrapper';
+import Settings from './pages/Settings';
+import OfficerManagement from './pages/OfficerManagement';
 
 // ✅ Onboarding page import
 import Onboarding from './pages/Onboarding'; // Make sure file exists
@@ -37,8 +39,8 @@ function App() {
             <Route path="onboarding" element={<Onboarding />} />
 
             {/* Other Protected Routes */}
-            {/* <Route path="users" element={<Users />} /> */}
-            {/* <Route path="settings" element={<Settings />} /> */}
+            <Route path="officer" element={<OfficerManagement />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
         

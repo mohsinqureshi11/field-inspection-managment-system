@@ -98,18 +98,18 @@ const Sidebar = () => {
               </Link>
             </li>
 
-            {/* Users Section */}
+            {/* Officer Section */}
             <li className="pt-2 mt-2 border-t border-gray-700">
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Users</span>
+              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Officer</span>
             </li>
             <li>
               <Link
-                to="/users"
+                to="/officer"
                 onClick={handleMenuClick}
                 className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors"
               >
                 <UserGroupIcon className="h-5 w-5 mr-3" />
-                User Management
+                Officer Management
               </Link>
             </li>
 
