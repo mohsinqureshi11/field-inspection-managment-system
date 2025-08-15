@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { officerAPI } from "../api/axios.js"; // hum axios instance use karenge
+import axios from "axios";
+import { officerAPI } from "../api/axios.js";
 
 const Onboarding = () => {
   const [formData, setFormData] = useState({
@@ -30,21 +31,22 @@ const Onboarding = () => {
     setMessage("");
 
     try {
-      // axios instance se POST request
-      const res = await officerAPI.createOfficer({
-        userName: formData.userName,
-        email: formData.email,
-        gander: formData.gander,
-        age: formData.age,
-        phoneNumber: formData.phoneNumber,
-        desigination: formData.desigination,
-        // profilePhoto backend me handle nahi ho raha abhi
-      });
+      // Backend URL from .env
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/createOfficer/officerRegister`,
+        {
+          userName: formData.userName,
+          email: formData.email,
+          gander: formData.gander,
+          age: formData.age,
+          phoneNumber: formData.phoneNumber,
+          desigination: formData.desigination,
+          // profilePhoto will be ignored in backend
+        }
+      );
 
-      console.log("Response from backend:", res);
-      setMessage(res.message || "Officer registered successfully!");
+      setMessage(res.data.message);
 
-      // form reset
       setFormData({
         userName: "",
         email: "",
@@ -56,7 +58,6 @@ const Onboarding = () => {
       });
 
     } catch (error) {
-      console.error("Error submitting form:", error.response || error);
       setMessage(error.response?.data?.message || "Error submitting form");
     } finally {
       setLoading(false);

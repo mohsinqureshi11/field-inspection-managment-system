@@ -1,8 +1,8 @@
 import axios from "axios";
 
-// console.log("Backend URL:", process.env.REACT_APP_BACKEND_URL);
+// backend URL from .env
 const backend = axios.create({
-  baseURL: "https://fims-backend-lac.vercel.app",
+  baseURL: process.env.REACT_APP_BACKEND_URL,
   // withCredentials: true, // agar cookies ya credentials chahiye
 });
 
