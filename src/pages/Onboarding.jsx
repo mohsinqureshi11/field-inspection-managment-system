@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { officerAPI } from "../api/axios.js";
 
 const Onboarding = () => {
   const [formData, setFormData] = useState({

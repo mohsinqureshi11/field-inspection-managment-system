@@ -6,4 +6,9 @@ const backend = axios.create({
   // withCredentials: true, // agar cookies ya credentials chahiye
 });
 
-
+export const officerAPI = {
+  getAllOfficers: async () => {
+    const res = await backend.get("/officerapi/getAllOfficers");
+    return res.data;
+  },
+};
