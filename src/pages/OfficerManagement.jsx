@@ -39,17 +39,20 @@ const OfficerManagement = () => {
 
     try {
       setDeleteLoading(officerId);
-      // TODO: Add delete API call here when backend is ready
-      // const res = await officerAPI.deleteOfficer(officerId);
+      console.log("Deleting officer:", officerName);
       
-      // For now, just remove from local state
+      // Call the delete API with officer name
+      const res = await officerAPI.deleteOfficer(officerName);
+      console.log("Delete API response:", res);
+      
+      // Remove from local state regardless of response (since backend might not return success flag)
       setOfficers(prev => prev.filter(officer => officer._id !== officerId));
-      
-      // Show success message
       alert(`Officer "${officerName}" deleted successfully!`);
+      
     } catch (error) {
       console.error("Failed to delete officer", error);
-      alert("Failed to delete officer. Please try again.");
+      console.error("Error details:", error.response?.data);
+      alert(`Failed to delete officer "${officerName}". Please try again.`);
     } finally {
       setDeleteLoading(null);
     }
