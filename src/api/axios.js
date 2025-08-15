@@ -1,4 +1,6 @@
 import axios from "axios";
+
+console.log(import.meta.env.VITE_API_BACKEND_URL);
 console.log("env variable showin",process.env.VITE_API_BACKEND_URL);
 
 // backend URL from .env
