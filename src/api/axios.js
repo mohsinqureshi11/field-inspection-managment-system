@@ -12,7 +12,9 @@ export const officerAPI = {
     return res.data;
   },
   createOfficer: async (officerData) => {
+    console.log("Sending officer data:", officerData); 
     const res = await backend.post("/createOfficer/officerRegister", officerData);
+    console.log("Response from backend:", res.data);
     return res.data;
   }
 };
