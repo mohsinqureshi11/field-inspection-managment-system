@@ -1,11 +1,9 @@
 import axios from "axios";
 
-console.log(import.meta.env.VITE_API_BACKEND_URL);
-console.log("env variable showin",process.env.VITE_API_BACKEND_URL);
 
 // backend URL from .env
 const backend = axios.create({
-  baseURL: process.env.VITE_API_BACKEND_URL,
+  baseURL: "https://fims-backend-lac.vercel.app",
   // withCredentials: true, // agar cookies ya credentials chahiye
 });
 

@@ -32,7 +32,7 @@ const Onboarding = () => {
     try {
       // Backend URL from .env
       const res = await axios.post(
-        `${process.env.VITE_API_BACKEND_URL}/createOfficer/officerRegister`,
+        `https://fims-backend-lac.vercel.app/createOfficer/officerRegister`,
         {
           userName: formData.userName,
           email: formData.email,
@@ -55,6 +55,7 @@ const Onboarding = () => {
         desigination: "",
         profilePhoto: null,
       });
+console.log("data is",res);
 
     } catch (error) {
       setMessage(error.response?.data?.message || "Error submitting form");
