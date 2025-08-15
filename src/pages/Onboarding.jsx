@@ -32,7 +32,7 @@ const Onboarding = () => {
     try {
       // Backend URL from .env
       const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/createOfficer/officerRegister`,
+        `${process.env.VITE_BACKEND_URL}/createOfficer/officerRegister`,
         {
           userName: formData.userName,
           email: formData.email,
